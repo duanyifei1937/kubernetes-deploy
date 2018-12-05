@@ -1,0 +1,30 @@
+# 并不能使用cronjob 实现 all node clean log，
+# 因为cronjob只在cluster内运行一次
+
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: hello
+spec:
+  schedule: "*/1 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: hello
+            image: harbor.qyvideo.net/duanyifei-test/busybox:latest
+            args:
+            - /bin/sh
+            - -c
+            - echo `date` >> /keep/111
+            volumeMounts:
+              - name: keep-path
+                mountPath: /keep
+          restartPolicy: OnFailure
+          volumes:
+            - name: keep-path
+              hostPath:
+                path: /data/soft/keep
+          nodeSelector:
+            dyf: test

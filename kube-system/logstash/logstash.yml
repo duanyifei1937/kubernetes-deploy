@@ -1,0 +1,37 @@
+apiVersion: extensions/v1beta1
+kind: DaemonSet
+metadata:
+  name: kvision-logstash
+  namespace: kube-system
+spec:
+  template:
+    metadata:
+      # Mark this pod as a critical add-on; when enabled, the critical add-on scheduler
+      # reserves resources for critical add-on pods so that they can be rescheduled after
+      # a failure.  This annotation works in tandem with the toleration below.
+      labels:
+        name: kvision-logstash
+    spec:
+      hostAliases:
+      - ip: "10.19.24.13"
+        hostnames:
+          - "kmr-6b5b65e0-gn-0268aba9-master-1-001.ksc.com"
+      - ip: "10.19.24.14"
+        hostnames:
+          - "kmr-6b5b65e0-gn-0268aba9-core-1-001.ksc.com"
+      - ip: "10.19.24.2"
+        hostnames:
+          - "kmr-6b5b65e0-gn-0268aba9-core-1-002.ksc.com"
+      # Allow this pod to be rescheduled while the node is in "critical add-ons only" mode.
+      # This, along with the annotation above marks this pod as a critical add-on.
+      hostNetwork: true
+      containers:
+      - image: harbor.qyvideo.net/cy/kvision-logstash:0.2
+        name: kvision-logstash
+        volumeMounts:
+          - name: log-path
+            mountPath: /data/logs
+      volumes:
+        - name: log-path
+          hostPath:
+            path: /data/logs

@@ -1,0 +1,53 @@
+groups:
+- name: kubernetes
+  rules:
+  # node status:
+  - alert: k8s-node-DiskPressure
+    expr: sum(kube_node_status_condition{condition="DiskPressure", status="true"}) BY (job, pod) > 0
+    for: 3m
+    annotations:
+      summary: '{{ $labels.pod }}, node DiskPressure, current_value: {{ $value }}'
+
+  - alert: k8s-node-MemoryPressure
+    expr: sum(kube_node_status_condition{condition="MemoryPressure", status="true"}) BY (job, pod) > 0
+    for: 3m
+    annotations:
+      summary: '{{ $labels.pod }}, node MemoryPressure, current_value: {{ $value }}'
+
+  - alert: k8s-node-OutOfDisk
+    expr: sum(kube_node_status_condition{condition="OutOfDisk", status="true"}) BY (job, pod) > 0
+    for: 3m
+    annotations:
+      summary: '{{ $labels.pod }}, node OutOfDisk, current_value: {{ $value }}'
+
+  - alert: k8s-node-PIDPressure
+    expr: sum(kube_node_status_condition{condition="PIDPressure", status="true"}) BY (job, pod) > 0
+    for: 3m
+    annotations:
+      summary: '{{ $labels.pod }}, node PIDPressure, current_value: {{ $value }}'
+
+  # pod phase:
+  - alert: k8s-pod-Pending
+    expr: sum(kube_pod_status_phase{phase="Pending"}) BY (job, pod) > 0
+    for: 10m
+    annotations:
+      summary: '{{ $labels.pod }}, pod phase Pending, current_value: {{ $value }}'
+
+  - alert: k8s-pod-faild
+    expr: sum(kube_pod_status_phase{phase="Failed"}) BY (job, pod) > 0
+    for: 3m
+    annotations:
+      summary: '{{ $labels.pod }}, pod phase Failed, current_value: {{ $value }}'
+
+  # containers status:
+  - alert: k8s-containers-waiting
+    expr: sum(kube_pod_container_status_waiting) BY (job, pod) > 0
+    for: 3m
+    annotations:
+      summary: '{{ $labels.pod }}, container status waiting, current_value: {{ $value }}'
+
+  - alert: k8s-containers-terminated
+    expr: sum(kube_pod_container_status_terminated) BY (job, pod) > 0
+    for: 3m
+    annotations:
+      summary: '{{ $labels.pod }}, container status terminated, current_value: {{ $value }}'

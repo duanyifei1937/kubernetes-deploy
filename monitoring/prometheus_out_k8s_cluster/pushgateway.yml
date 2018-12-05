@@ -1,0 +1,38 @@
+---
+apiVersion: extensions/v1beta1
+kind: DaemonSet
+metadata:
+  name: prometheus-pushgw-exporter
+  namespace: monitoring
+  labels:
+    app: prometheus
+    component: pushgw-exporter
+spec:
+  template:
+    metadata:
+      name: prometheus-pushgw-exporter
+      labels:
+        app: prometheus
+        component: pushgw-exporter
+    spec:
+      containers:
+      - image: harbor.qyvideo.net/kubernetes-monitor/pushgateway:v0.5.2
+        name: prometheus-pushgw-exporter
+        imagePullPolicy: Always
+        ports:
+        - name: prom-pushgw-exp
+          containerPort: 9091
+          hostPort: 9091
+      hostNetwork: true
+      hostPID: true
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: gputype
+                operator: In
+                values:
+                - v100
+                - titanv
+                - p4

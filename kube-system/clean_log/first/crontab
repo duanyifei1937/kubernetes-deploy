@@ -1,0 +1,2 @@
+* 3 * * * root find /data/logs -maxdepth 1 -type f -mtime +3 -exec rm -rf {} \; && echo "`date` clean OK" >> /var/log/cron.log 2>&1
+

@@ -1,0 +1,46 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-test
+  labels:
+    name: nginx-test
+  annotations:
+    prometheus.io/probe: "true"
+  namespace: kube-system
+spec:
+  ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP
+  selector:
+    app: nginx-test
+---
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: nginx-test
+  namespace: kube-system
+  annotations:
+    prometheus.io/probe: "true"
+spec:
+  selector:
+    matchLabels:
+      app: nginx-test
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: nginx-test
+      annotations:
+        prometheus.io/probe: "true"
+        prometheus.io/port: "80"
+        prometheus.io/scheme: "https"
+    spec:
+      containers:
+      - name: nginx-test
+        image: harbor.qyvideo.net/duanyifei-test/nginx:master
+        command:
+        - "nginx"
+        - "-g"
+        - "daemon off;"
+        imagePullPolicy: Always

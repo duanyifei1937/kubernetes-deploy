@@ -1,0 +1,21 @@
+apiVersion: extensions/v1beta1
+kind: DaemonSet
+metadata:
+  name: clean-log-daemonset
+  namespace: kube-system
+spec:
+  template:
+    metadata:
+      labels:
+        name: clean-log
+    spec:
+      containers:
+      - image: IMAGE_VERSION
+        name: clean-log
+        volumeMounts:
+          - name: log-path
+            mountPath: /data/logs
+      volumes:
+        - name: log-path
+          hostPath:
+            path: /data/logs

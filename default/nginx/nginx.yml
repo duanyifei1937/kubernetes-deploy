@@ -1,0 +1,44 @@
+# kubernetes.csr 证书添加apiserver addr
+# hostPath volume nginx-data 需要每台存在dir
+# nginx log 挂载到node keep hostPath 可保留(delete Deployment)
+---
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: nginx
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: nginx
+  replicas: 1
+  minReadySeconds: 60
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        command:
+        - "nginx"
+        - "-g"
+        - "daemon off;"
+        imagePullPolicy: Always
+        volumeMounts:
+        - name: nginx-data
+          mountPath: /usr/share/nginx/html/index.html
+          subPath: index.html
+        - name: nginx-log
+          mountPath: /var/log/nginx/
+      volumes:
+        - name: nginx-data
+          hostPath:
+            path: /data/deploy/nginx_data
+        - name: nginx-log
+          hostPath:
+            path: /data/logs/nginx
+      nodeSelector:
+        ip: ip_54
+---

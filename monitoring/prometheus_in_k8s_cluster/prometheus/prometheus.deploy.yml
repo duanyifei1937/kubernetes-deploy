@@ -1,0 +1,61 @@
+---
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  labels:
+    name: prometheus-deployment
+  name: prometheus
+  namespace: monitoring
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prometheus
+  template:
+    metadata:
+      labels:
+        app: prometheus
+    spec:
+      containers:
+      - image: harbor.qyvideo.net/duanyifei-test/prometheus:v2.4.1
+        name: prometheus
+        command:
+        - "/bin/prometheus"
+        args:
+        - "--config.file=/etc/prometheus/prometheus.yml"
+        - "--storage.tsdb.path=/prometheus"
+        - "--storage.tsdb.retention=24h"
+        - "--web.enable-admin-api"  # 控制对admin HTTP API的访问，其中包括删除时间序列等功能
+        - "--web.enable-lifecycle"  # 支持热更新，直接执行localhost:9090/-/reload立即生效
+        ports:
+        - containerPort: 9090
+          protocol: TCP
+        volumeMounts:
+        - mountPath: "/prometheus"
+          name: data
+        - mountPath: "/etc/prometheus"
+          name: config-volume
+        - mountPath: "/etc/prometheus/basic_rules"
+          name: rules-basic-cm
+        - mountPath: "/etc/prometheus/k8s_rules"
+          name: rules-kubernetes-config
+        resources:
+          requests:
+            cpu: 100m
+            memory: 100Mi
+          limits:
+            cpu: 500m
+            memory: 2500Mi
+      serviceAccountName: prometheus    
+      volumes:
+      - name: data
+        emptyDir: {}
+      - name: config-volume
+        configMap:
+          name: prometheus-config
+      - name: rules-basic-cm
+        configMap:
+          name: rules-basic-config
+      - name: rules-kubernetes-config
+        configMap:
+          name: rules-kubernetes-config
