@@ -8,6 +8,12 @@ groups:
       summary: "Instance {{ $labels.instance }} down"
       description: "{{ $labels.instance }} of job {{ $labels.job }} has been down for more than 5 minutes."
 
+  - alert: port_success
+    expr: probe_success < 1
+    for: 1m
+    annotations:
+      summary: "Job: {{ $labels.job }}, Instance:{{ $labels.instance }}, service port down."
+
   - alert: basic_cpu_idle
     expr: avg(irate(node_cpu{mode="idle"}[5m]) * 100) by (job, instance) < 10
     for: 2m

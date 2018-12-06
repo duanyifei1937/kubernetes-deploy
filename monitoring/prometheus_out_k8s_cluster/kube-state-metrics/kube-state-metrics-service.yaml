@@ -22,4 +22,4 @@ spec:
     nodePort: 30089
   selector:
     k8s-app: kube-state-metrics
-
+# 同样支持in k8s cluster 部署
