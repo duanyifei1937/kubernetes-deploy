@@ -41,4 +41,3 @@ spec:
             path: /data/logs/nginx
       nodeSelector:
         ip: ip_54
----
