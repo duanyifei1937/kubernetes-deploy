@@ -22,7 +22,7 @@ spec:
           - bash
           - "-c"
           - |
-            start -u k8s -p 3T/ZFuV6qz}83ziB -P 80 -X 10.254.9.159:80
+            start -u k8s -p xx123xx -P 80 -X 10.254.9.159:80
 ---
 # nginx-passwd-svc
 apiVersion: v1
