@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ingress-filebeat-config
+  namespace: ingress-nginx
+  labels:
+    name: ingress-filebeat-config
+data:
+  filebeat.yml: |
+    filebeat.prospectors:
+    - type: log
+      enabled: true
+      paths:
+        - /data/logs/nginx/*.log
+      ignore_older: 2h
+      tail_files: true
+    output.elasticsearch:
+      hosts: ['elasticsearch-logging.kube-system:9200']

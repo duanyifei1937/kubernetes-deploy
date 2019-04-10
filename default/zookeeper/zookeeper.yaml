@@ -90,7 +90,7 @@ spec:
           --conf_dir=/opt/zookeeper/conf \
           --client_port=2181 \
           --election_port=3888 \
-          --server_port=2888 \
+          --server_port=2888 \s
           --tick_time=2000 \
           --init_limit=10 \
           --sync_limit=5 \
@@ -123,8 +123,8 @@ spec:
       securityContext:
         runAsUser: 1000
         fsGroup: 1000
-#      nodeSelector:
-#        gputype: p4
+      nodeSelector:
+        gputype: p4
   volumeClaimTemplates:
   - metadata:
       name: zk-datadir
