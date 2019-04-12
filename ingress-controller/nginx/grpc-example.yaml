@@ -1,0 +1,22 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/backend-protocol: "GRPC"
+    nginx.ingress.kubernetes.io/http2-listener: "true"
+  name: vision-task-grpc
+  namespace: dev
+spec:
+  rules:
+  - host: grpc-ai.ksyun.com
+    http:
+      paths:
+      - backend:
+          serviceName: vision-task
+          servicePort: grpc
+  tls:
+  - secretName: ksyun-com-cert-tls
+    hosts:
+      - grpc-ai.ksyun.com
