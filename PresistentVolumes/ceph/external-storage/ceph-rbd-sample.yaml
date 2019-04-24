@@ -1,0 +1,75 @@
+# external-storage -- ceph sample
+# https://github.com/kubernetes-incubator/external-storage/blob/master/ceph/rbd/README.md
+apiVersion: v1
+kind: Secret
+metadata:
+  name: ceph-admin-secret
+  namespace: kube-system
+type: "kubernetes.io/rbd"
+data:
+  # ceph auth get-key client.admin | base64
+  key: QVFETlBMeGN4MDV3T1JBQUhVK1VjWFFTUEZKeUl5OGZYb21uRGc9PQ==
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: ceph-secret
+  namespace: kube-system
+type: "kubernetes.io/rbd"
+data:
+  # ceph auth add client.kube mon 'allow r' osd 'allow rwx pool=kube'
+  # ceph auth get-key client.kube | base64
+  key: QVFBLzViNWNFcWJOSGhBQUgzd29SU1RBSTFBWithaEJxbGowa3c9PQ==
+---
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: rbd
+provisioner: ceph.com/rbd
+parameters:
+  monitors: 172.16.16.61:6789
+  pool: kube
+  adminId: admin
+  adminSecretNamespace: kube-system
+  adminSecretName: ceph-admin-secret
+  userId: kube
+  userSecretNamespace: kube-system
+  userSecretName: ceph-secret
+  imageFormat: "2"
+  imageFeatures: layering
+---
+kind: Pod
+apiVersion: v1
+metadata:
+  name: test-pod
+  namespace: kube-system
+spec:
+  # 由于版本问题，只能固定在这个点
+  # 需要统一固定为 rpm-jewel
+  nodeSelector:
+    kubernetes.io/hostname: 172.16.16.36
+  containers:
+  - name: test-pod
+    image: harbor.qyvideo.net/duanyifei-test/busybox:1.24
+    command: ["tail", "-f", "/etc/hosts"]
+    volumeMounts:
+    - name: pvc
+      mountPath: "/mnt"
+  restartPolicy: "Never"
+  volumes:
+  - name: pvc
+    persistentVolumeClaim:
+      claimName: claim1
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: claim1
+  namespace: kube-system
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: rbd
+  resources:
+    requests:
+      storage: 1Gi

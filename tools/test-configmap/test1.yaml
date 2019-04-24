@@ -1,0 +1,47 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: nginx
+  namespace: kube-system
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: harbor.qyvideo.net/duanyifei-test/nginx:master
+        volumeMounts:
+        - name: index-file
+          mountPath: /usr/share/nginx/html/index.html
+          subPath: index.html
+        - name: test-file
+          mountPath: /usr/share/nginx/1
+      volumes:
+        - name: index-file
+          configMap:
+            name: nginx-index-config
+        - name: test-file
+          configMap:
+            name: test-config
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-index-config
+  namespace: kube-system
+data:
+  index.html: |
+    xxx
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: test-config
+  namespace: kube-system
+data:
+  abc.html: |
+    xxx
+
