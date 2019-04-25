@@ -2,6 +2,12 @@
 kubernetes-deploy 项目汇总k8s部署文件
 
 [toc]
+
+## dashboard
+kubernetes-dashboard
+* nodeport 方式
+* https ingress 方式
+
 ## ingress-controller
 * ingress controller install
 * 日志格式自定义

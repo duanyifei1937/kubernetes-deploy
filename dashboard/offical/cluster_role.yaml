@@ -1,0 +1,30 @@
+# dashboard UI -- error:
+# configmaps is forbidden: User "system:anonymous" cannot list resource "configmaps" in API group "" in the namespace "default"
+
+
+# ------------------- Gross Hack For anonymous auth through api proxy ------------------- #
+# Allows users to reach login page and other proxied dashboard URLs
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: kubernetes-dashboard-anonymous
+rules:
+- apiGroups: [""]
+  resources: ["services/proxy"]
+  resourceNames: ["https:kubernetes-dashboard:"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+- nonResourceURLs: ["/ui", "/ui/*", "/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/*"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: kubernetes-dashboard-anonymous
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: kubernetes-dashboard-anonymous
+subjects:
+- kind: User
+  name: system:anonymous
