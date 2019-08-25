@@ -12,6 +12,8 @@ spec:
       labels:
         app: toolbox
     spec:
+      nodeSelector:
+        kubernetes.io/hostname: 172.16.16.14
       containers:
       - name: toolbox
         image: harbor.qyvideo.net/k8s/toolbox:0.1

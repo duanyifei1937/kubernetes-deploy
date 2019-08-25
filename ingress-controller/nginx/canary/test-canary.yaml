@@ -1,0 +1,41 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: nginx-configuration
+  namespace: ingress-nginx
+  labels:
+    app.kubernetes.io/name: ingress-nginx
+    app.kubernetes.io/part-of: ingress-nginx
+data:
+  http-snippet: |
+    split_clients "$date_gmt" $mirror_servers {
+       100%    duanyifei-new.rongcloud.com;
+    }
+---
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: test-ingress
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      mirror /mirror;
+    nginx.ingress.kubernetes.io/server-snippet: |
+      location = /mirror {
+        internal;
+        set $shadow_service_name    "nginx-product-service";
+        proxy_set_header X-Shadow-Service  $shadow_service_name;
+        proxy_pass http://$mirror_servers$request_uri;
+      }
+spec:
+  rules:
+  - host: duanyifei-test.rongcloud.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: nginx
+          servicePort: 80

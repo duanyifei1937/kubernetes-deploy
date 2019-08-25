@@ -1,0 +1,26 @@
+# 生成 auth 加密文件
+# htpasswd -c auth user1
+
+# 生成secret
+# kubectl -n <namespace> create secret generic basic-auth --from-file=auth
+
+
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: prometheus
+  namespace: monitoring
+  annotations:
+    nginx.ingress.kubernetes.io/auth-type: basic
+    nginx.ingress.kubernetes.io/auth-secret: basic-auth
+    nginx.ingress.kubernetes.io/auth-realm: "Authentication Required - user1"
+spec:
+  rules:
+    - host: prom.xxxxx.im
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: prometheus-svc
+              servicePort: 9090
