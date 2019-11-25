@@ -40,4 +40,4 @@ spec:
           hostPath:
             path: /data/logs/nginx
       nodeSelector:
-        ip: ip_54
+        kubernetes.io/hostname: 10.200.23.104

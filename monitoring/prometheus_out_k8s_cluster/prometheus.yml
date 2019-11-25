@@ -20,6 +20,7 @@ scrape_configs:
       - targets: ['127.0.0.1:9091']
 
   # ------------------ online-----------------------------
+  # cadvisor
   # https://github.com/google/cadvisor
   - job_name: 'online-kubernetes-cadvisor'
     kubernetes_sd_configs:
@@ -31,6 +32,7 @@ scrape_configs:
         replacement: '${1}:4194'
         target_label: __address__
 
+  # node-export
   # https://github.com/prometheus/prometheus/blob/master/documentation/examples/prometheus-kubernetes.yml#L37
   - job_name: 'online-kubernetes-nodes'
     kubernetes_sd_configs:

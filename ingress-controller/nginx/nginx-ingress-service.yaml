@@ -16,5 +16,4 @@ spec:
     protocol: TCP
   selector:
     app.kubernetes.io/name: ingress-nginx
-
 # 访问虽然不需要，但会报错~~

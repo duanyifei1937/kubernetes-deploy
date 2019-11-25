@@ -17,7 +17,10 @@ data:
       ignore_older: 2h
       tail_files: true
     output.kafka:
-      hosts: ["kmr-6b5b65e0-gn-0268aba9-master-1-001.ksc.com:6667", "kmr-6b5b65e0-gn-0268aba9-core-1-001.ksc.com:6667", "kmr-6b5b65e0-gn-0268aba9-core-1-002.ksc.com:6667"]
+      hosts:
+        - kafka-001:6667
+        - kafka-002:6667
+        - kafka-003:6667
       topic: "kvision-log"
       worker: 3
 ---
@@ -36,15 +39,15 @@ spec:
         app: filebeat
     spec:
       hostAliases:
-      - ip: "10.19.24.13"
+      - ip: "1.2.3.4"
         hostnames:
-          - "kmr-6b5b65e0-gn-0268aba9-master-1-001.ksc.com"
-      - ip: "10.19.24.14"
+          - "abc1.com"
+      - ip: "1.2.3.4"
         hostnames:
-          - "kmr-6b5b65e0-gn-0268aba9-core-1-001.ksc.com"
-      - ip: "10.19.24.2"
+          - "abc1.com"
+      - ip: "1.2.3.4"
         hostnames:
-          - "kmr-6b5b65e0-gn-0268aba9-core-1-002.ksc.com"
+          - "abc1.com"
       hostNetwork: true
       containers:
       - image: harbor.qyvideo.net/duanyifei-test/filebeat:6.1.1_v1

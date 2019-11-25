@@ -40,7 +40,7 @@ spec:
     spec:
       containers:
       - name: nginx-test
-        image: harbor.qyvideo.net/duanyifei-test/nginx:master
+        image: nginx:latest
         command:
         - "nginx"
         - "-g"
